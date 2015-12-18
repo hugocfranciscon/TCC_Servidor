@@ -1,0 +1,491 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 25/10/2015, 14:25:41
+    Author     : guto
+*/
+
+body {font-family:Arial, Sans-Serif;}
+
+.table { display: table; margin: 0 auto;  
+    border-collapse:collapse ;
+    width: 90%;
+ border: 1px solid #104941;
+font-size: 12px;
+//table-layout:fixed;
+} 
+.table-responsive{text-align: center;
+                  padding-bottom: 200px;
+               
+                  
+
+                  }
+
+/*.table {border-collapse:collapse; table-layout:fixed; text-align: center; margin: 0 auto; display: inline-block; width:80%;}*/
+
+
+.table>.tableRow { display: table-row;
+                   border: 1px solid #104941;
+height: 35px;}
+
+.table>.tableHead { background-color:  #104941;
+                    color: white;
+                    font-weight: bold;
+                    height: 30px;
+                    font-size: 12px;
+                    display: table-row}
+
+.table>.tableHead>.cell { 
+    display: table-cell; 
+    height: 40px; 
+    width: 20px;
+    vertical-align: middle;
+    text-align: center;
+    padding: auto;
+    border: 1px solid #104941;}
+
+
+.table>.tableRow>.cell { 
+    display: table-cell; 
+    vertical-align: middle;
+    text-align: center;
+    padding: auto;
+    z-index:1;
+    max-width: 400px;
+    min-width: 100px;
+    min-height: 30px;
+    
+    word-wrap: break-word;
+    border: 1px solid #104941;
+
+
+}
+
+.table>.tableRow>.cell2 { 
+    display: table-cell; 
+    vertical-align: middle;
+    text-align: center;
+    padding: auto;
+    z-index: 0;
+    max-width: 400px;
+    min-width: 150px;
+    min-height: 30px;
+    
+    word-wrap: break-word;
+    border: 1px solid #104941;
+
+
+}
+
+.medicos{
+    min-width:250px;
+    z-index:0;
+}
+
+
+
+
+
+
+
+
+
+
+
+.table>.tableRow>.cell>.input2{
+
+    background-color: white;
+    border:none;
+    width:100%; height:100%;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    
+
+    vertical-align: middle;
+    text-align: center;
+
+}
+
+
+
+.table>.tableRow>.cell>.input2:hover{
+    cursor: pointer;
+    background-color: #c8e6e2;
+}
+
+.table>.tableRow>.cell>.input2:focus {
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield;
+    background-color: gainsboro;
+    background-color: -moz-field;
+    border: 3px solid black;
+    box-shadow: 1px 1px 1px 0 lightgray inset;  
+    font: -moz-field;
+    font: -webkit-small-control;
+
+    padding: 2px 3px;
+
+}
+
+
+.table>.tableRow>.cell>.id{
+
+    background-color: white;
+    border:none;
+    width:100%; height:100%;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+
+    vertical-align: middle;
+    text-align: center;
+
+}
+
+
+
+
+.btn-xs{
+    margin-left:2px;
+    margin-right: 2px;
+}
+
+
+
+
+
+
+
+
+.navbar-inverse {
+    background-color: #26ae90;
+    border-color: #26ae90;
+    color: white;
+    border-radius: 0px;
+}
+
+.navbar-inverse .navbar-brand {
+    color: white;
+}
+
+navbar-inverse .navbar-brand:hover, navbar-inverse .navbar-brand:focus,navbar-inverse .navbar-brand:active {
+    background-color: #126257;
+}
+
+.navbar-inverse .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus,.navbar-default .navbar-nav > li > a:enabled {
+    background-color: #126257;
+    color: white;
+}
+.navbar-inverse .navbar-nav > li > a {
+    color: white;
+}
+.navbar-inverse .navbar-nav > .active > a{
+    border-bottom: 3px solid black;
+    background-color: #126257;
+}
+
+
+
+
+.popupBoxOnePosition{
+    top: 0; left: 0; position: fixed; width: 100%; height: 120%;
+    background-color: rgba(0,0,0,0.7); display: none;
+}
+
+.popupBoxWrapper{
+    width: 550px; margin: 50px auto; text-align: left; position: relative; z-index: 2;
+}
+.popupBoxContent{
+    background-color: #FFF; padding: 25px; padding-top: 10px;
+}
+
+.popupBoxContent>div{
+    padding-top:8px;
+
+}
+
+.popupBoxContent>div>*{
+    padding-right:8px;
+
+}
+
+
+
+
+.dropdown-check-list {
+    display: inline-block;
+}
+.dropdown-check-list .anchor {
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+    padding: 5px 50px 5px 10px;
+    border: 1px solid #ccc;
+}
+.dropdown-check-list .anchor:after {
+    position: absolute;
+    content: "";
+    border-left: 2px solid black;
+    border-top: 2px solid black;
+    padding: 5px;
+    right: 10px;
+    top: 20%;
+    -moz-transform: rotate(-135deg);
+    -ms-transform: rotate(-135deg);
+    -o-transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+    transform: rotate(-135deg);
+}
+.dropdown-check-list .anchor:active:after {
+    right: 8px;
+    top: 21%;
+}
+.dropdown-check-list ul.items {
+    padding: 2px;
+    display: none;
+    margin: 0;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+.dropdown-check-list ul.items li {
+    list-style: none;
+}
+.dropdown-check-list.visible .anchor {
+    color: #0094ff;
+}
+.dropdown-check-list.visible .items {
+    display: block;
+}
+
+/*
+ body {font-family:Arial, Sans-Serif;}
+            
+            .table { display: table; margin: 0 auto;  
+                border-collapse:collapse ;
+                width: 90%;
+             border: 1px solid #104941;
+            font-size: 12px;} 
+            
+            
+            
+            .table>.tableRow { display: table-row;
+             border: 1px solid #104941;}
+            
+            .table>.tableHead { background-color:  #104941;
+            color: white;
+            font-weight: bold;
+            height: 30px;
+            font-size: 12px;
+            display: table-row}
+            
+             .table>.tableHead>.cell { 
+                display: table-cell; 
+                height: 40px; 
+                width: 20px;
+                vertical-align: middle;
+                text-align: center;
+               padding: auto;
+             border: 1px solid #104941;}
+            
+            
+            .table>.tableRow>.cell { 
+                display: table-cell; 
+                height: 40px; 
+                width: 20px;
+                vertical-align: middle;
+                text-align: center;
+               padding: auto;
+             border: 1px solid #104941;}
+            
+          
+            
+            
+            
+           
+           
+            
+        
+            
+            
+          
+             .table>.tableRow>.cell>.input2{
+              
+                background-color: white;
+                border:none;
+                 width:100%; height:100%;
+                -moz-appearance: none;
+                -webkit-appearance: none;
+              
+                vertical-align: middle;
+                text-align: center;
+                  
+            }
+            
+            
+            
+             .table>.tableRow>.cell>.input2:hover{
+                cursor: pointer;
+                background-color: #c8e6e2;
+            }
+            
+             .table>.tableRow>.cell>.input2:focus {
+                -moz-appearance: textfield;
+                -webkit-appearance: textfield;
+                background-color: gainsboro;
+                background-color: -moz-field;
+                border: 3px solid black;
+                box-shadow: 1px 1px 1px 0 lightgray inset;  
+                font: -moz-field;
+                font: -webkit-small-control;
+                
+                padding: 2px 3px;
+                   
+            }
+            
+         
+            .table>.tableRow>.cell>.id{
+              
+                background-color: white;
+                border:none;
+                 width:100%; height:100%;
+                -moz-appearance: none;
+                -webkit-appearance: none;
+              
+                vertical-align: middle;
+                text-align: center;
+                  
+            }
+            
+            
+            
+           
+            .btn-xs{
+                margin-left:2px;
+                margin-right: 2px;
+            }
+         
+            
+           
+           
+          
+            
+            
+            
+            .navbar-inverse {
+                background-color: #26ae90;
+                border-color: #26ae90;
+                color: white;
+                border-radius: 0px;
+            }
+             
+            .navbar-inverse .navbar-brand {
+                color: white;
+            }
+            
+            navbar-inverse .navbar-brand:hover, navbar-inverse .navbar-brand:focus,navbar-inverse .navbar-brand:active {
+                background-color: #126257;
+            }
+            
+            .navbar-inverse .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus,.navbar-default .navbar-nav > li > a:enabled {
+                background-color: #126257;
+                color: white;
+            }
+            .navbar-inverse .navbar-nav > li > a {
+                color: white;
+            }
+            .navbar-inverse .navbar-nav > .active > a{
+                border-bottom: 3px solid black;
+                background-color: #126257;
+            }
+            
+            
+            
+            
+            .popupBoxOnePosition{
+				top: 0; left: 0; position: fixed; width: 100%; height: 120%;
+				background-color: rgba(0,0,0,0.7); display: none;
+			}
+            
+            .popupBoxWrapper{
+				width: 550px; margin: 50px auto; text-align: left;
+			}
+			.popupBoxContent{
+				background-color: #FFF; padding: 25px; padding-top: 10px;
+			}
+                        
+                        .popupBoxContent>div{
+				padding-top:8px;
+                                
+			}
+                        
+                        .popupBoxContent>div>*{
+				padding-right:8px;
+                                
+			}
+                        
+                        
+                        
+                        
+            .dropdown-check-list {
+                display: inline-block;
+              }
+              .dropdown-check-list .anchor {
+                position: relative;
+                cursor: pointer;
+                display: inline-block;
+                padding: 5px 50px 5px 10px;
+                border: 1px solid #ccc;
+              }
+              .dropdown-check-list .anchor:after {
+                position: absolute;
+                content: "";
+                border-left: 2px solid black;
+                border-top: 2px solid black;
+                padding: 5px;
+                right: 10px;
+                top: 20%;
+                -moz-transform: rotate(-135deg);
+                -ms-transform: rotate(-135deg);
+                -o-transform: rotate(-135deg);
+                -webkit-transform: rotate(-135deg);
+                transform: rotate(-135deg);
+              }
+              .dropdown-check-list .anchor:active:after {
+                right: 8px;
+                top: 21%;
+              }
+              .dropdown-check-list ul.items {
+                padding: 2px;
+                display: none;
+                margin: 0;
+                border: 1px solid #ccc;
+                border-top: none;
+              }
+              .dropdown-check-list ul.items li {
+                list-style: none;
+              }
+              .dropdown-check-list.visible .anchor {
+                color: #0094ff;
+              }
+              .dropdown-check-list.visible .items {
+                display: block;
+              }
+              */
+ 
+      .container{
+                padding-top: 60px;
+                display: block;
+                text-align: center;
+                margin:0 auto;
+            }
+            .form-control{
+                text-align: center;
+                
+            }
+ 
+            /* You could add a class to all the input boxes instead, if you like. That would be safer, and more backwards-compatible */
+            form input[type="text"],
+            form input[type="password"],
+            form input[type="email"] {width:200px;margin:0 auto;}

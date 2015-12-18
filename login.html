@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <title>Login</title>
+
+        <!-- Bootstrap -->
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+
+
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        <style type="text/css">
+            body {font-family:Arial, Sans-Serif; background: #26ae90;}
+ 
+            .container{
+                padding-top: 60px;
+                display: block;
+                text-align: center;
+                margin:0 auto;
+            }
+            .form-control{
+                text-align: center;
+                
+            }
+ 
+            /* You could add a class to all the input boxes instead, if you like. That would be safer, and more backwards-compatible */
+            form input[type="text"],
+            form input[type="password"],
+            form input[type="email"] {width:200px;margin:0 auto;}
+ 
+              </style>
+    </head>
+    <body>
+
+        <div class="container">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form role="form" action="index.php" method="post">
+                            <div class="form-group">
+
+                                
+                                <input class="form-control" id="login" name="login" type="text" placeholder="Login"/>
+                            </div>
+                            <div class="form-group">
+
+                             
+                                <input class="form-control" id="senha" name="senha" type="password" placeholder="Senha" />
+                            </div>
+                            <input style = "display:none" type="text" name="tag" value="loginPeloSite"/>
+                      
+                            <button type="submit" class="btn btn-default">
+                                Login
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="js/bootstrap.min.js"></script>
+    </body>
+</html>
+
+
+
+
