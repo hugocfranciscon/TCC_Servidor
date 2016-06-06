@@ -2,15 +2,12 @@
 header('Content-Type: text/html; charset=utf-8');
 class DB_Functions {
  
-    private $database;
- 
     function __construct() {
         require_once 'DB_Connect.php';
         // connecting to database
         $this->db = new DB_Connect();
         $this->db->connect();
-        mysql_set_charset("utf8", $database);
-    } 
+    }
 
     function __destruct() {         
     }
@@ -30,8 +27,6 @@ class DB_Functions {
             $result = mysql_query("SELECT * FROM `mydb`.`Usuario` WHERE login = '$login'");
             // return user details
             return mysql_fetch_array($result);
-        } else {    
-            return false;
         }
     }
     
@@ -85,8 +80,7 @@ class DB_Functions {
     public function storeRegId($idMedico, $reg_id) {     
         if ($reg_id === "NULL"){
             $result = mysql_query("UPDATE `mydb`.`Medico` SET reg_id = NULL WHERE Usuario_idUsuario='$idMedico'");
-        }
-        else{
+        } else {
             $result = mysql_query("UPDATE `mydb`.`Medico` SET reg_id='$reg_id' WHERE Usuario_idUsuario='$idMedico'");
         }
         
@@ -96,8 +90,6 @@ class DB_Functions {
             $result = mysql_query("SELECT * FROM `mydb`.`Medico` WHERE Usuario_idUsuario = '$idMedico'");
             // return reg_id
             return mysql_fetch_array($result);
-        } else {    
-            return false;
         }
     }
     
@@ -124,8 +116,6 @@ class DB_Functions {
             $result = mysql_query("SELECT temperatura,taxaBatimentos,glicose,saturacaoOxigenio,pressaoSistolica,pressaoDiastolica,funcaoPulmonar,Paciente_idPaciente FROM `mydb`.`Sinais` WHERE Paciente_idPaciente = '$idPaciente'");
             // retorna sinais
             return mysql_fetch_array($result);
-        } else {    
-            return false;
         }
     }    
     
@@ -135,8 +125,6 @@ class DB_Functions {
             $idAlerta = mysql_insert_id();
             $result = mysql_query("SELECT idAlertas FROM `mydb`.`HistóricoAlertas` WHERE idAlertas = '$idAlerta'");
             return mysql_fetch_array($result);
-        } else {
-            return false;
         }
     }
     
