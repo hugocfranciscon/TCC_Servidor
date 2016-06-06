@@ -65,32 +65,23 @@ and open the template in the editor.
         </nav>
         <?php
             // include db handler
-        $usuario = unserialize($_COOKIE["login"]);
-        if ($usuario["tipoDeUsuario"] == 3 ){
-            require_once 'include/DB_Functions.php';
-            $db = new DB_Functions();
-
-            $pacientes = $db->getTodosPacientes();
-            
-            
-        }else{
-            echo"Bem-Vindo, convidado <br>";
-            echo"Essas informações <font color='red'>NÃO PODEM</font> ser acessadas por você";
-            echo"<br><a href='login.html'>Faça Login</a> para ler o conteúdo<br><br><br><br>";
-            exit();
-        }
-            
-          function getUltimoPacienteId(){
-              require_once 'include/DB_Functions.php';
-               $db = new DB_Functions();
-            
-              $id = $db->getUltimoPacienteInserido();
-              return $id;
-          }
-        
+            $usuario = unserialize($_COOKIE["login"]);
+            if ($usuario["tipoDeUsuario"] == 3 ){
+                require_once 'include/DB_Functions.php';
+                $database = new DB_Functions();
+                $pacientes = $database->getTodosPacientes();
+            } else {
+                echo"Bem-Vindo, convidado <br>";
+                echo"Essas informações <font color='red'>NÃO PODEM</font> ser acessadas por você";
+                echo"<br><a href='login.html'>Faça Login</a> para ler o conteúdo<br><br><br><br>";
+                exit();
+            }
+            function getUltimoPacienteId(){
+                require_once 'include/DB_Functions.php';
+                $database = new DB_Functions();
+                return $database->getUltimoPacienteInserido();
+            }
         ?>
-
-      
         <div class="table-responsive">
         <div class="table" border="2"  >
             <div class="tableHead">
