@@ -93,18 +93,18 @@ class DB_Functions {
         }
     }
     
-     /**
-      * Salva Sinais de um paciente
-      * @param type $idPaciente
-      * @param type $temperatura
-      * @param type $taxaBatimentos
-      * @param type $glicose
-      * @param type $saturacaoOxigenio
-      * @param type $pressaoSistolica
-      * @param type $pressaoDiastolica
-      * @param type $funcaoPulmonar
-      * @return boolean
-      */
+    /**
+     * Salva Sinais de um paciente
+     * @param type $idPaciente
+     * @param type $temperatura
+     * @param type $taxaBatimentos
+     * @param type $glicose
+     * @param type $saturacaoOxigenio
+     * @param type $pressaoSistolica
+     * @param type $pressaoDiastolica
+     * @param type $funcaoPulmonar
+     * @return boolean
+     */
     public function salvaSinais($idPaciente, $temperatura, $taxaBatimentos, $glicose, $saturacaoOxigenio, $pressaoSistolica, $pressaoDiastolica, $funcaoPulmonar) {
         $result = mysql_query("INSERT INTO `mydb`.`Sinais` (`dataHora`, `temperatura`, `taxaBatimentos`, `glicose`, `saturacaoOxigenio`, `pressaoSistolica`, `pressaoDiastolica`, `funcaoPulmonar`, `Paciente_idPaciente`) "
                 . "VALUES (NULL,'$temperatura', '$taxaBatimentos', '$glicose', '$saturacaoOxigenio', '$pressaoSistolica', '$pressaoDiastolica', '$funcaoPulmonar', '$idPaciente')"
@@ -145,8 +145,8 @@ class DB_Functions {
         $no_of_rows = mysql_num_rows($diagnostico);
         
         if ($no_of_rows > 0) {
-            while($e = mysql_fetch_assoc($diagnostico)){
-                $idCID = $e['CID_idCID'];
+            while($retorno = mysql_fetch_assoc($diagnostico)){
+                $idCID = $retorno['CID_idCID'];
                 $result = mysql_query("SELECT * FROM `mydb`.`CID` WHERE idCID = '$idCID'");
                 $result = mysql_fetch_assoc($result);
                                      
@@ -342,8 +342,6 @@ class DB_Functions {
                     } 
                 }
             }          
-            //$gcm = new GCM();
-            //$alerta = $gcm->send_notification($ids, $data);
             $this->sendGCM($data, $ids); //this ta certo ????????
             return true;
         } else {
@@ -431,15 +429,15 @@ class DB_Functions {
         $result = mysql_query("SELECT Paciente_idPaciente FROM `mydb`.`Medico_Paciente` WHERE Medico_Usuario_idUsuario = '$idMedico'") or die(mysql_error());
         $no_of_rows = mysql_num_rows($result);
         if ($no_of_rows > 0) {
-            while($e = mysql_fetch_assoc($result)){
+            while($retorno = mysql_fetch_assoc($result)){
                 //Pega o id do paciente
-                $idPaciente = $e['Paciente_idPaciente'];                
+                $idPaciente = $retorno['Paciente_idPaciente'];                
                 // Pega as informações do paciente
                 $result2= mysql_query("SELECT idPaciente, nome FROM `mydb`.`Paciente` WHERE idPaciente = '$idPaciente'") or die(mysql_error());
                 // $result2 = $this->getPaciente($idPaciente);
                 
-                $e2=mysql_fetch_assoc($result2);                    
-                $output[$e2{'idPaciente'}]= $e2;
+                $retorno2 = mysql_fetch_assoc($result2);                    
+                $output[$retorno2{'idPaciente'}]= $retorno2;
             }            
             return $output;           
         } else {
@@ -589,27 +587,22 @@ class DB_Functions {
     
     public function getPacientesPorAla($ala){
         $output = array();
-        $quartos = $this->getQuartosDaAla($ala);
-         
-        $no_of_rows = mysql_num_rows($quartos);
-        
+        $quartos = $this->getQuartosDaAla($ala);         
+        $no_of_rows = mysql_num_rows($quartos);        
         if ($no_of_rows>0){
-            
-            while($q = mysql_fetch_assoc($quartos)){
-                $idQuarto = $q["idQuarto"];
+            while($retorno = mysql_fetch_assoc($quartos)){
+                $idQuarto = $retorno["idQuarto"];
                 $result = mysql_query("SELECT idPaciente FROM `mydb`.`Paciente` WHERE Quarto_idQuarto = '$idQuarto' ") or die(mysql_error());
                 $paciente = mysql_fetch_assoc($result);
-               
                 $output[] = $paciente["idPaciente"];
             }
-        }  
-        return $output;   
+        }
+        return $output;
     }
 
     public function getSolicitacoes($ala){
         $pacientes = $this->getPacientesPorAla($ala);
-        $solicitacoes = array();
-        
+        $solicitacoes = array();        
         foreach ($pacientes as $idPaciente){            
             $result = mysql_query("SELECT * FROM `mydb`.`Solicitacao` WHERE (confirmacao IS NULL AND Paciente_idPaciente='$idPaciente')") or die(mysql_error());
             
@@ -644,8 +637,7 @@ class DB_Functions {
         if ($no_of_rows > 0) {
             while($e = mysql_fetch_assoc($result)){
                 //Pega o id do CID
-                $idCID = $e['CID_idCID'];
-                
+                $idCID = $e['CID_idCID'];                
                 // Pega nome do diagnostico
                 $result2= mysql_query("SELECT nome FROM `mydb`.`CID` WHERE idCID = '$idCID'") or die(mysql_error());
                 $e2=mysql_fetch_assoc($result2);
@@ -653,11 +645,10 @@ class DB_Functions {
                 $output[$idCID]= $e2;        
             }  
            return $output;
-        }else {
+        } else {
             return false;
         }
     }
-    
     
     public function registraEvolucao($idPaciente, $descricao){
         $result = mysql_query("INSERT INTO `mydb`.`Evolucao` (`idEvolucao`, `Paciente_idPaciente`, `data`, `descricao`) VALUES (NULL, '$idPaciente',NULL, '$descricao');") or die(mysql_error());
@@ -699,8 +690,8 @@ class DB_Functions {
     
     public function respondeSolicitacao($idSolicitacao, $resposta){
         $result = mysql_query("UPDATE `mydb`.`Solicitacao` SET resposta='$resposta', confirmacao=TRUE WHERE idSolicitacao='$idSolicitacao'");
-    } 
- 
+    }
+
     /**
      * Criptografia da senha
      */
