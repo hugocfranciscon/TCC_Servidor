@@ -106,16 +106,20 @@ class DB_Functions {
      * @return boolean
      */
     public function salvaSinais($idPaciente, $temperatura, $taxaBatimentos, $glicose, $saturacaoOxigenio, $pressaoSistolica, $pressaoDiastolica, $funcaoPulmonar) {
-        $result = mysql_query("INSERT INTO `mydb`.`Sinais` (`dataHora`, `temperatura`, `taxaBatimentos`, `glicose`, `saturacaoOxigenio`, `pressaoSistolica`, `pressaoDiastolica`, `funcaoPulmonar`, `Paciente_idPaciente`) "
-                . "VALUES (NULL,'$temperatura', '$taxaBatimentos', '$glicose', '$saturacaoOxigenio', '$pressaoSistolica', '$pressaoDiastolica', '$funcaoPulmonar', '$idPaciente')"
-                ." ON DUPLICATE KEY UPDATE dataHora=NULL, temperatura='$temperatura', taxaBatimentos='$taxaBatimentos', glicose='$glicose', saturacaoOxigenio='$saturacaoOxigenio', pressaoSistolica='$pressaoSistolica', pressaoDiastolica='$pressaoDiastolica', "
-                ." funcaoPulmonar='$funcaoPulmonar';") or die(mysql_error());
-        // check for successful store
-        if ($result) {
-            // pega sinais
-            $result = mysql_query("SELECT temperatura,taxaBatimentos,glicose,saturacaoOxigenio,pressaoSistolica,pressaoDiastolica,funcaoPulmonar,Paciente_idPaciente FROM `mydb`.`Sinais` WHERE Paciente_idPaciente = '$idPaciente'");
-            // retorna sinais
-            return mysql_fetch_array($result);
+        try {
+            $result = mysql_query("INSERT INTO `mydb`.`Sinais` (`dataHora`, `temperatura`, `taxaBatimentos`, `glicose`, `saturacaoOxigenio`, `pressaoSistolica`, `pressaoDiastolica`, `funcaoPulmonar`, `Paciente_idPaciente`) "
+                    . "VALUES (NULL,'$temperatura', '$taxaBatimentos', '$glicose', '$saturacaoOxigenio', '$pressaoSistolica', '$pressaoDiastolica', '$funcaoPulmonar', '$idPaciente')"
+                    ." ON DUPLICATE KEY UPDATE dataHora=NULL, temperatura='$temperatura', taxaBatimentos='$taxaBatimentos', glicose='$glicose', saturacaoOxigenio='$saturacaoOxigenio', pressaoSistolica='$pressaoSistolica', pressaoDiastolica='$pressaoDiastolica', "
+                    ." funcaoPulmonar='$funcaoPulmonar';");
+            // check for successful store
+            if ($result) {
+                // pega sinais
+                $result = mysql_query("SELECT temperatura,taxaBatimentos,glicose,saturacaoOxigenio,pressaoSistolica,pressaoDiastolica,funcaoPulmonar,Paciente_idPaciente FROM `mydb`.`Sinais` WHERE Paciente_idPaciente = '$idPaciente'");
+                // retorna sinais
+                return mysql_fetch_array($result);
+            }
+        } catch (Exception $e) {
+            return false;
         }
     }    
     
@@ -174,180 +178,236 @@ class DB_Functions {
     }
     
     public function editaPaciente($idPaciente, $nome, $dataDeNascimento, $sexo, $dataDeAdmissao, $quarto, $descricao, $endereco, $telefone, $email){
-        $result = mysql_query("UPDATE `mydb`.`Paciente` SET nome='$nome', dataDeNascimento='$dataDeNascimento', sexo='$sexo',descricao='$descricao', dataDeAdmissao='$dataDeAdmissao', Quarto_idQuarto='$quarto', endereco='$endereco', telefone='$telefone', email='$email' WHERE idPaciente='$idPaciente'") or die(mysql_error());
-        // check for successful store
-        if ($result) {
-            return true;            
-        } else {
+        try {
+            $result = mysql_query("UPDATE `mydb`.`Paciente` SET nome='$nome', dataDeNascimento='$dataDeNascimento', sexo='$sexo',descricao='$descricao', dataDeAdmissao='$dataDeAdmissao', Quarto_idQuarto='$quarto', endereco='$endereco', telefone='$telefone', email='$email' WHERE idPaciente='$idPaciente'");
+            // check for successful store
+            if ($result) {
+                return true;            
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
-        }        
+        }
     }
     
     public function editaUsuario($idUsuario, $nome, $login, $senha, $telefone, $email, $endereco, $tipoDeUsuario){
-        $hash = $this->hashSSHA($senha);
-        $encrypted_password = $hash["encrypted"]; // encrypted password
-        $salt = $hash["salt"]; // salt
-        $result = mysql_query("UPDATE `mydb`.`Usuario` SET nome='$nome', login='$login', senha_criptografada='$encrypted_password',salt='$salt', telefone='$telefone', email='$email', endereco='$endereco', tipoDeUsuario='$tipoDeUsuario' WHERE idUsuario='$idUsuario'") or die(mysql_error());
-        if ($result) {
-            return true;            
-        } else {
+        try {
+            $hash = $this->hashSSHA($senha);
+            $encrypted_password = $hash["encrypted"]; // encrypted password
+            $salt = $hash["salt"]; // salt
+            $result = mysql_query("UPDATE `mydb`.`Usuario` SET nome='$nome', login='$login', senha_criptografada='$encrypted_password',salt='$salt', telefone='$telefone', email='$email', endereco='$endereco', tipoDeUsuario='$tipoDeUsuario' WHERE idUsuario='$idUsuario'");
+            if ($result) {
+                return true;            
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
-        }        
+        }
     }
     
     public function getUltimoPacienteInserido(){
-        $result = mysql_query("SELECT idPaciente FROM `mydb`.`Paciente` ORDER BY idPaciente DESC LIMIT 0,1");
-         if ($result) {
-            $paciente = mysql_fetch_array($result);        
-            return $paciente["idPaciente"];            
-        } else {
+        try {
+            $result = mysql_query("SELECT idPaciente FROM `mydb`.`Paciente` ORDER BY idPaciente DESC LIMIT 0,1");
+             if ($result) {
+                $paciente = mysql_fetch_array($result);        
+                return $paciente["idPaciente"];            
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
         }
     }
     
     public function editaHistorico($fumante, $usoDeAlcool, $usoDeDroga, $alergia, $infoAdicional, $idPaciente){
-        $result = mysql_query("UPDATE `mydb`.`HistoricoMedico` SET fumante='$fumante', usoDeAlcool='$usoDeAlcool', usoDeDroga='$usoDeDroga',alergia='$alergia', infoAdicional='$infoAdicional' WHERE Paciente_idPaciente='$idPaciente'") or die(mysql_error());
-        if ($result) {
-            return true;        
-        } else {
+        try {
+            $result = mysql_query("UPDATE `mydb`.`HistoricoMedico` SET fumante='$fumante', usoDeAlcool='$usoDeAlcool', usoDeDroga='$usoDeDroga',alergia='$alergia', infoAdicional='$infoAdicional' WHERE Paciente_idPaciente='$idPaciente'");
+            if ($result) {
+                return true;        
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
         }
     }
     
     public function apagaPaciente($idPaciente){
-        $result = mysql_query("DELETE FROM `mydb`.`Paciente` WHERE idPaciente='$idPaciente'") or die(mysql_error());
-        // check for successful store
-        if ($result) {
-            return true;            
-        } else {
+        try {
+            $result = mysql_query("DELETE FROM `mydb`.`Paciente` WHERE idPaciente='$idPaciente'");
+            // check for successful store
+            if ($result) {
+                return true;            
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
         }
     }
     
     public function apagaMedico_paciente($idPaciente){
-        $result = mysql_query("DELETE FROM `mydb`.`Medico_Paciente` WHERE Paciente_idPaciente='$idPaciente'") or die(mysql_error());
-        // check for successful store
-        if ($result) {
-            return true;            
-        } else {
+        try {
+            $result = mysql_query("DELETE FROM `mydb`.`Medico_Paciente` WHERE Paciente_idPaciente='$idPaciente'");
+            // check for successful store
+            if ($result) {
+                return true;            
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
         }
     }
     
     public function apagaMedicamento($idMedicamento){
-        $result = mysql_query("DELETE FROM `mydb`.`Medicamento` WHERE idMedicamento='$idMedicamento'") or die(mysql_error());
-        // check for successful store
-        if ($result) {
-            return true;            
-        } else {
+        try {
+            $result = mysql_query("DELETE FROM `mydb`.`Medicamento` WHERE idMedicamento='$idMedicamento'");
+            // check for successful store
+            if ($result) {
+                return true;            
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
         }
     }
     
     public function apagaDiagnostico($idDiagnostico){
-        $result = mysql_query("DELETE FROM `mydb`.`CID` WHERE idCID='$idDiagnostico'") or die(mysql_error());
-        // check for successful store
-        if ($result) {
-            return true;
-        } else {
+        try {
+            $result = mysql_query("DELETE FROM `mydb`.`CID` WHERE idCID='$idDiagnostico'");
+            // check for successful store
+            if ($result) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
         }
     }
     
     public function apagaUsuario($idUsuario, $tipoDeUsuario){
-        if ($tipoDeUsuario == 1) {
-            $result = mysql_query("DELETE FROM `mydb`.`Medico` WHERE Usuario_idUsuario='$idUsuario'") or die(mysql_error());
-        }else if ($tipoDeUsuario == 2) {
-            $result = mysql_query("DELETE FROM `mydb`.`Enfermeira` WHERE Usuario_idUsuario='$idUsuario'") or die(mysql_error());
-        } else {
-            $result = mysql_query("DELETE FROM `mydb`.`Recepcionista` WHERE Usuario_idUsuario='$idUsuario'") or die(mysql_error());
-        }
-        $result = mysql_query("DELETE FROM `mydb`.`Usuario` WHERE idUsuario='$idUsuario'") or die(mysql_error());
-        // check for successful store
-        if ($result) {
-            return true;            
-        } else {
+        try {
+            if ($tipoDeUsuario == 1) {
+                $result = mysql_query("DELETE FROM `mydb`.`Medico` WHERE Usuario_idUsuario='$idUsuario'");
+            }else if ($tipoDeUsuario == 2) {
+                $result = mysql_query("DELETE FROM `mydb`.`Enfermeira` WHERE Usuario_idUsuario='$idUsuario'");
+            } else {
+                $result = mysql_query("DELETE FROM `mydb`.`Recepcionista` WHERE Usuario_idUsuario='$idUsuario'");
+            }
+            $result = mysql_query("DELETE FROM `mydb`.`Usuario` WHERE idUsuario='$idUsuario'");
+            // check for successful store
+            if ($result) {
+                return true;            
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
-        }        
+        }
     }
     
     public function inserePaciente($nome, $dataDeNascimento, $sexo, $quarto, $descricao, $endereco, $telefone, $email, $fumante, $usoDeAlcool, $usoDeDroga, $alergia, $infoAdicional){
-        $result = mysql_query("INSERT INTO `mydb`.`Paciente` (`idPaciente`, `nome`, `dataDeNascimento`, `sexo`, `descricao`, `endereco`, `telefone`, `email`, `dataDeAdmissao`, `Quarto_idQuarto`) VALUES (NULL, '$nome', '$dataDeNascimento', '$sexo', '$descricao', '$endereco', '$telefone', '$email', NULL, '$quarto');") or die(mysql_error());
-        // check for successful store
-        $idPaciente = mysql_insert_id();
-        $result2 = mysql_query("INSERT INTO `mydb`.`HistoricoMedico` (`fumante`, `usoDeAlcool`, `usoDeDroga`, `alergia`, `infoAdicional`, `Paciente_idPaciente`) VALUES ('$fumante', '$usoDeAlcool', '$usoDeDroga', '$alergia', '$infoAdicional', '$idPaciente');") or die(mysql_error());
+        try {
+            $result = mysql_query("INSERT INTO `mydb`.`Paciente` (`idPaciente`, `nome`, `dataDeNascimento`, `sexo`, `descricao`, `endereco`, `telefone`, `email`, `dataDeAdmissao`, `Quarto_idQuarto`) VALUES (NULL, '$nome', '$dataDeNascimento', '$sexo', '$descricao', '$endereco', '$telefone', '$email', NULL, '$quarto');");
+            // check for successful store
+            $idPaciente = mysql_insert_id();
+            $result2 = mysql_query("INSERT INTO `mydb`.`HistoricoMedico` (`fumante`, `usoDeAlcool`, `usoDeDroga`, `alergia`, `infoAdicional`, `Paciente_idPaciente`) VALUES ('$fumante', '$usoDeAlcool', '$usoDeDroga', '$alergia', '$infoAdicional', '$idPaciente');");
 
-        if ($result2 && $result) {
-            $result = mysql_query("SELECT * FROM `mydb`.`Paciente` WHERE idPaciente='$idPaciente'");            
-            return mysql_fetch_assoc($result);            
-        } else {
+            if ($result2 && $result) {
+                $result = mysql_query("SELECT * FROM `mydb`.`Paciente` WHERE idPaciente='$idPaciente'");            
+                return mysql_fetch_assoc($result);            
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
-        }        
+        }
     }
     
-    public function insereMedicamento($nome, $descricao, $doseMaxima, $doseMinima){
-        $result = mysql_query("INSERT INTO `mydb`.`Medicamento` (`idMedicamento`, `nome`, `descricao`, `doseMaxima`, `doseMinima`) VALUES (NULL, '$nome', '$descricao', '$doseMaxima', '$doseMinima');") or die(mysql_error());
-        if ($result) {
-            return true;            
-        } else {
+    public function insereMedicamento($nome, $descricao, $doseMaxima, $doseMinima) {
+        try {
+            $result = mysql_query("INSERT INTO `mydb`.`Medicamento` (`idMedicamento`, `nome`, `descricao`, `doseMaxima`, `doseMinima`) VALUES (NULL, '$nome', '$descricao', '$doseMaxima', '$doseMinima');");
+            if ($result) {
+                return true;            
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
-        }        
+        }
     }
     
     public function insereDiagnostico($nome, $minTemperatura, $maxTemperatura, $minTaxaBatimentos, $maxTaxaBatimentos, $minGlicose, $maxGlicose, $minSaturacao, $maxSaturacao, $minSistolica, $maxSistolica, $minDiastolica, $maxDiastolica, $minFuncaoPulmonar, $maxFuncaoPulmonar){
-        $result = mysql_query("INSERT INTO `mydb`.`CID` (`idCID`, `nome`, `minTemperatura`, `maxTemperatura`, `minTaxaBatimentos`, `maxTaxaBatimentos`, `minGlicose`, `maxGlicose`, `minSaturacao`, `maxSaturacao`, `minSistolica`, `maxSistolica`, `minDiastolica`, `maxDiastolica`, `minFuncaoPulmonar`, `maxFuncaoPulmonar`) VALUES (NULL, '$nome' , $minTemperatura, $maxTemperatura, $minTaxaBatimentos, $maxTaxaBatimentos, $minGlicose, $maxGlicose, $minSaturacao, $maxSaturacao, $minSistolica, $maxSistolica, $minDiastolica, $maxDiastolica, $minFuncaoPulmonar, $maxFuncaoPulmonar);") or die(mysql_error());
-        if ($result) {
-            return true;
-        } else {
+        try {
+            $result = mysql_query("INSERT INTO `mydb`.`CID` (`idCID`, `nome`, `minTemperatura`, `maxTemperatura`, `minTaxaBatimentos`, `maxTaxaBatimentos`, `minGlicose`, `maxGlicose`, `minSaturacao`, `maxSaturacao`, `minSistolica`, `maxSistolica`, `minDiastolica`, `maxDiastolica`, `minFuncaoPulmonar`, `maxFuncaoPulmonar`) VALUES (NULL, '$nome' , $minTemperatura, $maxTemperatura, $minTaxaBatimentos, $maxTaxaBatimentos, $minGlicose, $maxGlicose, $minSaturacao, $maxSaturacao, $minSistolica, $maxSistolica, $minDiastolica, $maxDiastolica, $minFuncaoPulmonar, $maxFuncaoPulmonar);");
+            if ($result) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
         }
     }
     
     public function getMedicosDoPaciente($idPaciente) {
-        $result = mysql_query("SELECT * FROM `mydb`.`Medico_Paciente` WHERE Paciente_idPaciente = '$idPaciente'") or die(mysql_error());
-        $no_of_rows = mysql_num_rows($result);
-        if ($no_of_rows > 0) {
-            return $result;
-        } else {
+        try {
+            $result = mysql_query("SELECT * FROM `mydb`.`Medico_Paciente` WHERE Paciente_idPaciente = '$idPaciente'");
+            $no_of_rows = mysql_num_rows($result);
+            if ($no_of_rows > 0) {
+                return $result;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
         }
     }
 
     public function enviaAlerta($idPaciente, $mensagem, $tipo){
-        // Cria array de reg_ids com o reg_ids de todos os medicos associados ao paciente
-        $ids = array();
-        // Mensagem para envio
-        $paciente = $this->getPaciente($idPaciente);
-        $data = array('tipo'=>$tipo, 'nomePaciente'=>$paciente['nome'],'message' => $mensagem, 'idPaciente'=> $idPaciente);     
-        
-        // Seleciona Medicos associados ao paciente em questao
-        $result = mysql_query("SELECT Medico_Usuario_idUsuario FROM `mydb`.`Medico_Paciente` WHERE Paciente_idPaciente = '$idPaciente'") or die(mysql_error());
-        $no_of_rows = mysql_num_rows($result);
-        
-        if ($no_of_rows > 0) {
-            while($result2 = mysql_fetch_assoc($result)){    // Percorre os medicos associados ao paciente
-                //Pega o id do medico
-                $idMedico = $result2['Medico_Usuario_idUsuario'];
-                
-                // Pega reg_Id do medico
-                $result3= mysql_query("SELECT reg_id FROM `mydb`.`Medico` WHERE Usuario_idUsuario = '$idMedico'") or die(mysql_error());
-                $no_of_rows = mysql_num_rows($result3);
-                if ($no_of_rows > 0) {
-                    $result4=mysql_fetch_array($result3);
-                    // Adiciona reg_id ao array                    
-                    $reg_id = null;
-                    $reg_id = $result4['reg_id'];
-                    if ($reg_id !== null) {
-                        $ids[] = $reg_id; 
-                    } 
-                }
-            }          
-            $this->sendGCM($data, $ids); //this ta certo ????????
-            return true;
-        } else {
+        try {
+            // Cria array de reg_ids com o reg_ids de todos os medicos associados ao paciente
+            $ids = array();
+            // Mensagem para envio
+            $paciente = $this->getPaciente($idPaciente);
+            $data = array('tipo'=>$tipo, 'nomePaciente'=>$paciente['nome'],'message' => $mensagem, 'idPaciente'=> $idPaciente);     
+            
+            // Seleciona Medicos associados ao paciente em questao
+            $result = mysql_query("SELECT Medico_Usuario_idUsuario FROM `mydb`.`Medico_Paciente` WHERE Paciente_idPaciente = '$idPaciente'");
+            $no_of_rows = mysql_num_rows($result);
+            
+            if ($no_of_rows > 0) {
+                while($result2 = mysql_fetch_assoc($result)){    // Percorre os medicos associados ao paciente
+                    //Pega o id do medico
+                    $idMedico = $result2['Medico_Usuario_idUsuario'];
+                    
+                    // Pega reg_Id do medico
+                    $result3= mysql_query("SELECT reg_id FROM `mydb`.`Medico` WHERE Usuario_idUsuario = '$idMedico'");
+                    $no_of_rows = mysql_num_rows($result3);
+                    if ($no_of_rows > 0) {
+                        $result4=mysql_fetch_array($result3);
+                        // Adiciona reg_id ao array                    
+                        $reg_id = null;
+                        $reg_id = $result4['reg_id'];
+                        if ($reg_id !== null) {
+                            $ids[] = $reg_id; 
+                        } 
+                    }
+                }          
+                $this->sendGCM($data, $ids); //this ta certo ????????
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
-        }    
-    }    
+        }
+    }
       
     public function sendGCM($data, $ids)
     {
@@ -396,29 +456,36 @@ class DB_Functions {
      * Get user by email and password
      */
     public function getUsuario($login, $senha) {
-        $result = mysql_query("SELECT * FROM `mydb`.`Usuario` WHERE login = '$login'") or die(mysql_error());
-        // check for result 
-        $no_of_rows = mysql_num_rows($result);
-        if ($no_of_rows > 0) {
-            $usuario = mysql_fetch_array($result);
-            $salt = $usuario['salt'];
-            $encrypted_password = $usuario['senha_criptografada'];
-            $hash = $this->checkhashSSHA($salt, $senha);
-            // check for password equality
-            if ($encrypted_password == $hash) {
-                return $usuario;
+        try {
+            $result = mysql_query("SELECT * FROM `mydb`.`Usuario` WHERE login = '$login'");
+            // check for result 
+            $no_of_rows = mysql_num_rows($result);
+            if ($no_of_rows > 0) {
+                $usuario = mysql_fetch_array($result);
+                $salt = $usuario['salt'];
+                $encrypted_password = $usuario['senha_criptografada'];
+                $hash = $this->checkhashSSHA($salt, $senha);
+                // check for password equality
+                if ($encrypted_password == $hash) {
+                    return $usuario;
+                } else {
+                    return false;
+                }
             } else {
+                // user not found
                 return false;
             }
-        } else {
-            // user not found
+        } catch (Exception $e) {
             return false;
         }
     }
     
     public function getTodosUsuarios(){
-        $result = mysql_query("SELECT * FROM `mydb`.`Usuario`") or die(mysql_error());
-        return $result;
+        try {
+            $result = mysql_query("SELECT * FROM `mydb`.`Usuario`");
+            return $result;
+        } catch (Exception $e) {
+        }
     }
 
     /**
@@ -426,270 +493,357 @@ class DB_Functions {
      * @param type $idMedico
      */
     public function getPacientes($idMedico){
-        $result = mysql_query("SELECT Paciente_idPaciente FROM `mydb`.`Medico_Paciente` WHERE Medico_Usuario_idUsuario = '$idMedico'") or die(mysql_error());
-        $no_of_rows = mysql_num_rows($result);
-        if ($no_of_rows > 0) {
-            while($retorno = mysql_fetch_assoc($result)){
-                //Pega o id do paciente
-                $idPaciente = $retorno['Paciente_idPaciente'];                
-                // Pega as informações do paciente
-                $result2= mysql_query("SELECT idPaciente, nome FROM `mydb`.`Paciente` WHERE idPaciente = '$idPaciente'") or die(mysql_error());
-                // $result2 = $this->getPaciente($idPaciente);
-                
-                $retorno2 = mysql_fetch_assoc($result2);                    
-                $output[$retorno2{'idPaciente'}]= $retorno2;
-            }            
-            return $output;           
-        } else {
-            // Nao possui pacientes
+        try {
+            $result = mysql_query("SELECT Paciente_idPaciente FROM `mydb`.`Medico_Paciente` WHERE Medico_Usuario_idUsuario = '$idMedico'");
+            $no_of_rows = mysql_num_rows($result);
+            if ($no_of_rows > 0) {
+                while($retorno = mysql_fetch_assoc($result)){
+                    //Pega o id do paciente
+                    $idPaciente = $retorno['Paciente_idPaciente'];                
+                    // Pega as informações do paciente
+                    $result2= mysql_query("SELECT idPaciente, nome FROM `mydb`.`Paciente` WHERE idPaciente = '$idPaciente'");
+                    // $result2 = $this->getPaciente($idPaciente);
+                    
+                    $retorno2 = mysql_fetch_assoc($result2);                    
+                    $output[$retorno2{'idPaciente'}]= $retorno2;
+                }            
+                return $output;           
+            } else {
+                // Nao possui pacientes
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
         }
     }
     
     public function getTodosPacientes(){
-        $result = mysql_query("SELECT * FROM `mydb`.`Paciente`") or die(mysql_error());
-        $no_of_rows = mysql_num_rows($result);
-        if ($no_of_rows > 0) {
-            return $result;
-        } else {
+        try {
+            $result = mysql_query("SELECT * FROM `mydb`.`Paciente`");
+            $no_of_rows = mysql_num_rows($result);
+            if ($no_of_rows > 0) {
+                return $result;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
         }
     }
     
     public function getPaciente($idPaciente){
-        $paciente = mysql_query("SELECT nome, dataDeNascimento,descricao,Quarto_idQuarto, dataDeAdmissao FROM `mydb`.`Paciente` WHERE idPaciente = '$idPaciente'") or die(mysql_error());
-        $no_of_rows = mysql_num_rows($paciente);
-        if ($no_of_rows > 0) {
-            $paciente = mysql_fetch_array($paciente);
-            $result["nome"] = $paciente["nome"];
-            $result["dataDeNascimento"] = $paciente["dataDeNascimento"];
-            $result["descricao"] = $paciente["descricao"];
-            $result["Quarto_idQuarto"] = $paciente["Quarto_idQuarto"];
-            $result["dataDeAdmissao"] = $paciente["dataDeAdmissao"];
-            return $result;
-        } else {
-            return false;
-        }  
-    }
-    
-    public function getEnfermeira($idEnfermeira) {        
-        $result = mysql_query("SELECT * FROM `mydb`.`Enfermeira` WHERE Usuario_idUsuario='$idEnfermeira'") or die(mysql_error());
-        $no_of_rows = mysql_num_rows($result);
-        if ($no_of_rows > 0) {
-            return mysql_fetch_assoc($result);
-        } else {
+        try {
+            $paciente = mysql_query("SELECT nome, dataDeNascimento,descricao,Quarto_idQuarto, dataDeAdmissao FROM `mydb`.`Paciente` WHERE idPaciente = '$idPaciente'");
+            $no_of_rows = mysql_num_rows($paciente);
+            if ($no_of_rows > 0) {
+                $paciente = mysql_fetch_array($paciente);
+                $result["nome"] = $paciente["nome"];
+                $result["dataDeNascimento"] = $paciente["dataDeNascimento"];
+                $result["descricao"] = $paciente["descricao"];
+                $result["Quarto_idQuarto"] = $paciente["Quarto_idQuarto"];
+                $result["dataDeAdmissao"] = $paciente["dataDeAdmissao"];
+                return $result;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
         }
     }
     
-    public function getInfoUsuario($idUsuario) {        
-        $result = mysql_query("SELECT * FROM `mydb`.`Usuario` WHERE idUsuario='$idUsuario'") or die(mysql_error());
-        $no_of_rows = mysql_num_rows($result);
-        if ($no_of_rows > 0) {
-            $result = mysql_fetch_assoc($result);
-            return $result;
-        } else {
+    public function getEnfermeira($idEnfermeira) {
+        try {
+            $result = mysql_query("SELECT * FROM `mydb`.`Enfermeira` WHERE Usuario_idUsuario='$idEnfermeira'");
+            $no_of_rows = mysql_num_rows($result);
+            if ($no_of_rows > 0) {
+                return mysql_fetch_assoc($result);
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
         }
     }
     
-    public function getMedico($idMedico){        
-        $result = mysql_query("SELECT * FROM `mydb`.`Medico` WHERE Usuario_idUsuario='$idMedico'") or die(mysql_error());
-        $no_of_rows = mysql_num_rows($result);
-        if ($no_of_rows > 0) {
-            $result = mysql_fetch_assoc($result);
-            return $result;
-        } else {
+    public function getInfoUsuario($idUsuario) {
+        try {
+            $result = mysql_query("SELECT * FROM `mydb`.`Usuario` WHERE idUsuario='$idUsuario'");
+            $no_of_rows = mysql_num_rows($result);
+            if ($no_of_rows > 0) {
+                $result = mysql_fetch_assoc($result);
+                return $result;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+    
+    public function getMedico($idMedico){
+        try {
+            $result = mysql_query("SELECT * FROM `mydb`.`Medico` WHERE Usuario_idUsuario='$idMedico'");
+            $no_of_rows = mysql_num_rows($result);
+            if ($no_of_rows > 0) {
+                $result = mysql_fetch_assoc($result);
+                return $result;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
         }
     }
     
     public function medico_paciente($medicos, $idPaciente){
-        foreach ($medicos as $medico){
-            $result = mysql_query("INSERT INTO `mydb`.`Medico_Paciente` (`Paciente_idPaciente`, `Medico_Usuario_idUsuario`) VALUES ('$idPaciente', '$medico')") or die(mysql_error());
+        try {
+            foreach ($medicos as $medico){
+                $result = mysql_query("INSERT INTO `mydb`.`Medico_Paciente` (`Paciente_idPaciente`, `Medico_Usuario_idUsuario`) VALUES ('$idPaciente', '$medico')");
+            }
+        } catch (Exception $e) {
+            return false;
         }
     }
     
     public function getMedicos(){        
-        $result = mysql_query("SELECT * FROM `mydb`.`Medico`") or die(mysql_error());
-        $no_of_rows = mysql_num_rows($result);
-        if ($no_of_rows > 0) { 
-            return $result;
-        } else {
-            return false;     
+        try {
+            $result = mysql_query("SELECT * FROM `mydb`.`Medico`");
+            $no_of_rows = mysql_num_rows($result);
+            if ($no_of_rows > 0) { 
+                return $result;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
+            return false;
         }
     }
     
     public function getQuarto($idQuarto){
-        $result = mysql_query("SELECT * FROM `mydb`.`Quarto` WHERE idQuarto = '$idQuarto'") or die(mysql_error());
-        $no_of_rows = mysql_num_rows($result);
-        if ($no_of_rows > 0) {
-            $result = mysql_fetch_array($result);
-            return $result;
-        } else {
+        try {
+            $result = mysql_query("SELECT * FROM `mydb`.`Quarto` WHERE idQuarto = '$idQuarto'");
+            $no_of_rows = mysql_num_rows($result);
+            if ($no_of_rows > 0) {
+                $result = mysql_fetch_array($result);
+                return $result;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
         }
     }
 
     public function getSinais($idPaciente){
-        $result = mysql_query("SELECT * FROM `mydb`.`Sinais` WHERE Paciente_idPaciente = '$idPaciente' ORDER By dataHora DESC LIMIT 1") or die(mysql_error());
-        $no_of_rows = mysql_num_rows($result);
-        if ($no_of_rows > 0) {
-            $result = mysql_fetch_array($result);
-            return $result;
-        } else {
+        try {
+            $result = mysql_query("SELECT * FROM `mydb`.`Sinais` WHERE Paciente_idPaciente = '$idPaciente' ORDER By dataHora DESC LIMIT 1");
+            $no_of_rows = mysql_num_rows($result);
+            if ($no_of_rows > 0) {
+                $result = mysql_fetch_array($result);
+                return $result;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
         }
     }
     
     public function getHistorico($idPaciente){
-        $result = mysql_query("SELECT * FROM `mydb`.`HistoricoMedico` WHERE Paciente_idPaciente = '$idPaciente'") or die(mysql_error());
-        $no_of_rows = mysql_num_rows($result);
-        if ($no_of_rows > 0) {
-            $result = mysql_fetch_array($result);
-            return $result;
-        } else {
+        try {
+            $result = mysql_query("SELECT * FROM `mydb`.`HistoricoMedico` WHERE Paciente_idPaciente = '$idPaciente'");
+            $no_of_rows = mysql_num_rows($result);
+            if ($no_of_rows > 0) {
+                $result = mysql_fetch_array($result);
+                return $result;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
         }
     }
-    
-    
+
     public function getMedicamentos(){
-        $output = array();
-        $result = mysql_query("SELECT * FROM `mydb`.`Medicamento`") or die(mysql_error());
-        $no_of_rows = mysql_num_rows($result);
-        if ($no_of_rows > 0) {
-            while($e = mysql_fetch_assoc($result)){
-                $idMedicamento = $e["idMedicamento"];
-                $output[$idMedicamento]= $e; 
-            }     
-            return $output;
-        } else {
+        try {
+            $output = array();
+            $result = mysql_query("SELECT * FROM `mydb`.`Medicamento`");
+            $no_of_rows = mysql_num_rows($result);
+            if ($no_of_rows > 0) {
+                while($e = mysql_fetch_assoc($result)){
+                    $idMedicamento = $e["idMedicamento"];
+                    $output[$idMedicamento]= $e; 
+                }     
+                return $output;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
         }
     }
     
     public function getMedicamentoPorId($idMedicamento){
-        $result = mysql_query("SELECT * FROM `mydb`.`Medicamento` WHERE idMedicamento='$idMedicamento'") or die(mysql_error());
-        return mysql_fetch_assoc($result);
+        try {
+            $result = mysql_query("SELECT * FROM `mydb`.`Medicamento` WHERE idMedicamento='$idMedicamento'");
+            return mysql_fetch_assoc($result);
+        } catch (Exception $e) {
+            return false;
+        }
     }
     
     public function getQuartosDaAla($ala){
-        $result = mysql_query("SELECT idQuarto FROM `mydb`.`Quarto` WHERE Ala_idAla = '$ala'") or die(mysql_error());
-        $no_of_rows = mysql_num_rows($result);
-        
-        if ($no_of_rows > 0) {    
-            return $result;
-        } else {
+        try {
+            $result = mysql_query("SELECT idQuarto FROM `mydb`.`Quarto` WHERE Ala_idAla = '$ala'");
+            $no_of_rows = mysql_num_rows($result);
+            
+            if ($no_of_rows > 0) {    
+                return $result;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
         }
     }    
     
     public function getPacientesPorAla($ala){
-        $output = array();
-        $quartos = $this->getQuartosDaAla($ala);         
-        $no_of_rows = mysql_num_rows($quartos);        
-        if ($no_of_rows>0){
-            while($retorno = mysql_fetch_assoc($quartos)){
-                $idQuarto = $retorno["idQuarto"];
-                $result = mysql_query("SELECT idPaciente FROM `mydb`.`Paciente` WHERE Quarto_idQuarto = '$idQuarto' ") or die(mysql_error());
-                $paciente = mysql_fetch_assoc($result);
-                $output[] = $paciente["idPaciente"];
+        try {
+            $output = array();
+            $quartos = $this->getQuartosDaAla($ala);         
+            $no_of_rows = mysql_num_rows($quartos);        
+            if ($no_of_rows>0){
+                while($retorno = mysql_fetch_assoc($quartos)){
+                    $idQuarto = $retorno["idQuarto"];
+                    $result = mysql_query("SELECT idPaciente FROM `mydb`.`Paciente` WHERE Quarto_idQuarto = '$idQuarto' ");
+                    $paciente = mysql_fetch_assoc($result);
+                    $output[] = $paciente["idPaciente"];
+                }
             }
+            return $output;
+        } catch (Exception $e) {
+            return false;
         }
-        return $output;
     }
 
     public function getSolicitacoes($ala){
-        $pacientes = $this->getPacientesPorAla($ala);
-        $solicitacoes = array();        
-        foreach ($pacientes as $idPaciente){            
-            $result = mysql_query("SELECT * FROM `mydb`.`Solicitacao` WHERE (confirmacao IS NULL AND Paciente_idPaciente='$idPaciente')") or die(mysql_error());
-            
-            if (mysql_num_rows($result)>0){
-                while ($row = mysql_fetch_assoc($result)){                      
-                    $solicitacoes[] = $row; 
+        try {
+            $pacientes = $this->getPacientesPorAla($ala);
+            $solicitacoes = array();        
+            foreach ($pacientes as $idPaciente){            
+                $result = mysql_query("SELECT * FROM `mydb`.`Solicitacao` WHERE (confirmacao IS NULL AND Paciente_idPaciente='$idPaciente')");
+                
+                if (mysql_num_rows($result)>0){
+                    while ($row = mysql_fetch_assoc($result)){                      
+                        $solicitacoes[] = $row; 
+                    }
                 }
             }
-        }
-        return $solicitacoes;
-    }
-    
-    public function getDiagnosticos(){
-        $output = array();
-        $result = mysql_query("SELECT * FROM `mydb`.`CID`") or die(mysql_error());
-        $no_of_rows = mysql_num_rows($result);
-        if ($no_of_rows > 0) {
-            while($e = mysql_fetch_assoc($result)){
-                $idCID = $e["idCID"];
-                $output[$idCID]= $e; 
-            }
-            return $output;
-        } else {
+            return $solicitacoes;
+        } catch (Exception $e) {
             return false;
         }
     }
     
-     public function getDiagnosticoDoPaciente($idPaciente){
-         $output = array();
-        $result = mysql_query("SELECT CID_idCID FROM `mydb`.`Paciente_CID` WHERE Paciente_idPaciente = '$idPaciente'") or die(mysql_error());
-        $no_of_rows = mysql_num_rows($result);
-        if ($no_of_rows > 0) {
-            while($e = mysql_fetch_assoc($result)){
-                //Pega o id do CID
-                $idCID = $e['CID_idCID'];                
-                // Pega nome do diagnostico
-                $result2= mysql_query("SELECT nome FROM `mydb`.`CID` WHERE idCID = '$idCID'") or die(mysql_error());
-                $e2=mysql_fetch_assoc($result2);
-                
-                $output[$idCID]= $e2;        
-            }  
-           return $output;
-        } else {
+    public function getDiagnosticos(){
+        try {
+            $output = array();
+            $result = mysql_query("SELECT * FROM `mydb`.`CID`");
+            $no_of_rows = mysql_num_rows($result);
+            if ($no_of_rows > 0) {
+                while($e = mysql_fetch_assoc($result)){
+                    $idCID = $e["idCID"];
+                    $output[$idCID]= $e; 
+                }
+                return $output;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+    
+    public function getDiagnosticoDoPaciente($idPaciente){
+        try {
+            $output = array();
+            $result = mysql_query("SELECT CID_idCID FROM `mydb`.`Paciente_CID` WHERE Paciente_idPaciente = '$idPaciente'");
+            $no_of_rows = mysql_num_rows($result);
+            if ($no_of_rows > 0) {
+                while($e = mysql_fetch_assoc($result)){
+                    //Pega o id do CID
+                    $idCID = $e['CID_idCID'];
+                    
+                    // Pega nome do diagnostico
+                    $result2= mysql_query("SELECT nome FROM `mydb`.`CID` WHERE idCID = '$idCID'");
+                    $e2=mysql_fetch_assoc($result2);
+                    
+                    $output[$idCID]= $e2;        
+                }  
+               return $output;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
         }
     }
     
     public function registraEvolucao($idPaciente, $descricao){
-        $result = mysql_query("INSERT INTO `mydb`.`Evolucao` (`idEvolucao`, `Paciente_idPaciente`, `data`, `descricao`) VALUES (NULL, '$idPaciente',NULL, '$descricao');") or die(mysql_error());
-        if ($result) {
-            $idEvolucao = mysql_insert_id();
-            $result = mysql_query("SELECT idEvolucao, data FROM `mydb`.`Evolucao` WHERE idEvolucao = '$idEvolucao'");
-            return mysql_fetch_array($result);
-        } else {
+        try {
+            $result = mysql_query("INSERT INTO `mydb`.`Evolucao` (`idEvolucao`, `Paciente_idPaciente`, `data`, `descricao`) VALUES (NULL, '$idPaciente',NULL, '$descricao');");
+            if ($result) {
+                $idEvolucao = mysql_insert_id();
+                $result = mysql_query("SELECT idEvolucao, data FROM `mydb`.`Evolucao` WHERE idEvolucao = '$idEvolucao'");
+                return mysql_fetch_array($result);
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
         }
     }
     
     public function registraDiagnostico($idPaciente, $idDiagnostico, $observacoes){
-        $result = mysql_query("INSERT INTO `mydb`.`Paciente_CID` (`Paciente_idPaciente`, `CID_idCID`, `observacoes`, `data`) VALUES ('$idPaciente','$idDiagnostico', '$observacoes', NULL);") or die(mysql_error());
-        if ($result) {
-            $result = mysql_query("SELECT Paciente_idPaciente, CID_idCID, data FROM `mydb`.`Paciente_CID` WHERE CID_idCID = '$idDiagnostico' AND Paciente_idPaciente = '$idPaciente'");
-            return mysql_fetch_array($result);
-        } else {
+        try {
+            $result = mysql_query("INSERT INTO `mydb`.`Paciente_CID` (`Paciente_idPaciente`, `CID_idCID`, `observacoes`, `data`) VALUES ('$idPaciente','$idDiagnostico', '$observacoes', NULL);");
+            if ($result) {
+                $result = mysql_query("SELECT Paciente_idPaciente, CID_idCID, data FROM `mydb`.`Paciente_CID` WHERE CID_idCID = '$idDiagnostico' AND Paciente_idPaciente = '$idPaciente'");
+                return mysql_fetch_array($result);
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
         }
     }
     
     public function registraRequisicao($idPaciente, $idMedico, $idMedicamento, $descricao, $dose){
-       
-         if ($idMedicamento != "NULL"){
-            $result = mysql_query("INSERT INTO `mydb`.`Solicitacao` (`idSolicitacao`,`Paciente_idPaciente`, `Medicamento_idMedicamento`, `descricao`,`data`, `doseAdministrada`, `resposta`,`confirmacao`,  `Medico_Usuario_idUsuario`) VALUES (NULL, '$idPaciente', '$idMedicamento', '$descricao', NULL, '$dose', NULL, NULL, '$idMedico')") or die(mysql_error());
-        } else {
-            $result = mysql_query("INSERT INTO `mydb`.`Solicitacao` SET Paciente_idPaciente='$idPaciente', descricao='$descricao', Medico_Usuario_idUsuario='$idMedico'") or die(mysql_error());
-        }
-        if ($result) {
-            $idRequisicao = mysql_insert_id();
-            $result = mysql_query("SELECT idSolicitacao, data FROM `mydb`.`Solicitacao` WHERE idSolicitacao = '$idRequisicao'");
-            
-            return mysql_fetch_array($result);            
-        } else {
+        try {
+            if ($idMedicamento != "NULL"){
+                $result = mysql_query("INSERT INTO `mydb`.`Solicitacao` (`idSolicitacao`,`Paciente_idPaciente`, `Medicamento_idMedicamento`, `descricao`,`data`, `doseAdministrada`, `resposta`,`confirmacao`,  `Medico_Usuario_idUsuario`) VALUES (NULL, '$idPaciente', '$idMedicamento', '$descricao', NULL, '$dose', NULL, NULL, '$idMedico')");
+            } else {
+                $result = mysql_query("INSERT INTO `mydb`.`Solicitacao` SET Paciente_idPaciente='$idPaciente', descricao='$descricao', Medico_Usuario_idUsuario='$idMedico'");
+            }
+            if ($result) {
+                $idRequisicao = mysql_insert_id();
+                $result = mysql_query("SELECT idSolicitacao, data FROM `mydb`.`Solicitacao` WHERE idSolicitacao = '$idRequisicao'");
+                
+                return mysql_fetch_array($result);            
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
         }
     }
     
-    public function respondeSolicitacao($idSolicitacao, $resposta){
-        $result = mysql_query("UPDATE `mydb`.`Solicitacao` SET resposta='$resposta', confirmacao=TRUE WHERE idSolicitacao='$idSolicitacao'");
+    public function respondeSolicitacao($idSolicitacao, $resposta) {
+        try {
+            $result = mysql_query("UPDATE `mydb`.`Solicitacao` SET resposta='$resposta', confirmacao=TRUE WHERE idSolicitacao='$idSolicitacao'");
+        } catch (Exception $e) {
+            return false;
+        }
     }
 
     /**
