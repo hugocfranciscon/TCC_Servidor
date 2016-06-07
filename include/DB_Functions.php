@@ -598,7 +598,7 @@ class DB_Functions {
     public function medico_paciente($medicos, $idPaciente){
         try {
             foreach ($medicos as $medico){
-                $result = mysql_query("INSERT INTO `mydb`.`Medico_Paciente` (`Paciente_idPaciente`, `Medico_Usuario_idUsuario`) VALUES ('$idPaciente', '$medico')");
+                mysql_query("INSERT INTO `mydb`.`Medico_Paciente` (`Paciente_idPaciente`, `Medico_Usuario_idUsuario`) VALUES ('$idPaciente', '$medico')");
             }
         } catch (Exception $e) {
             return false;
@@ -840,7 +840,7 @@ class DB_Functions {
     
     public function respondeSolicitacao($idSolicitacao, $resposta) {
         try {
-            $result = mysql_query("UPDATE `mydb`.`Solicitacao` SET resposta='$resposta', confirmacao=TRUE WHERE idSolicitacao='$idSolicitacao'");
+            mysql_query("UPDATE `mydb`.`Solicitacao` SET resposta='$resposta', confirmacao=TRUE WHERE idSolicitacao='$idSolicitacao'");
         } catch (Exception $e) {
             return false;
         }
